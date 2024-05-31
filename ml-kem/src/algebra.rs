@@ -18,23 +18,29 @@ impl FieldElement {
     pub const Q: Integer = 3329;
     pub const Q32: u32 = Self::Q as u32;
     const Q64: u64 = Self::Q as u64;
-    const BARRETT_SHIFT: usize = 24;
-    const BARRETT_MULTIPLIER: u64 = (1 << Self::BARRETT_SHIFT) / Self::Q64;
+    // const BARRETT_SHIFT: usize = 24;
+    // const BARRETT_MULTIPLIER: u64 = (1 << Self::BARRETT_SHIFT) / Self::Q64;
 
     // A fast modular reduction for small numbers `x < 2*q`
     fn small_reduce(x: u16) -> u16 {
+        x & Self::Q
+        /*
         if x < Self::Q {
             x
         } else {
             x - Self::Q
         }
+        */
     }
 
     fn barrett_reduce(x: u32) -> u16 {
+        (x as u16) % Self::Q
+        /*
         let product = u64::from(x) * Self::BARRETT_MULTIPLIER;
         let quotient = (product >> Self::BARRETT_SHIFT).truncate();
         let remainder = x - quotient * Self::Q32;
         Self::small_reduce(remainder.truncate())
+        */
     }
 
     // Algorithm 11. BaseCaseMultiply
