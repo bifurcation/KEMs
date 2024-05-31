@@ -66,7 +66,10 @@ impl Add<FieldElement> for FieldElement {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self {
-        Self(Self::small_reduce(self.0 + rhs.0))
+        let lhs = u64::from(self.0);
+        let rhs = u64::from(rhs.0);
+        let sum = lhs + rhs;
+        Self(Self::small_reduce(sum as Integer))
     }
 }
 
@@ -74,8 +77,11 @@ impl Sub<FieldElement> for FieldElement {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self {
+        let lhs = u64::from(self.0);
+        let rhs = u64::from(rhs.0);
+        let diff = lhs + (u64::from(Self::Q)) - rhs;
         // Guard against underflow if `rhs` is too large
-        Self(Self::small_reduce(self.0 + Self::Q - rhs.0))
+        Self(Self::small_reduce(diff as Integer))
     }
 }
 
@@ -83,9 +89,10 @@ impl Mul<FieldElement> for FieldElement {
     type Output = FieldElement;
 
     fn mul(self, rhs: FieldElement) -> FieldElement {
-        let x = u32::from(self.0);
-        let y = u32::from(rhs.0);
-        Self(Self::barrett_reduce(x * y))
+        let x = u64::from(self.0);
+        let y = u64::from(rhs.0);
+        let prod = (x * y) % u64::from(Self::Q);
+        Self(prod as Integer)
     }
 }
 
