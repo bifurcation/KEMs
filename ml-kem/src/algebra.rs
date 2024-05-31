@@ -18,23 +18,29 @@ impl FieldElement {
     pub const Q: Integer = 3329;
     pub const Q32: u32 = Self::Q as u32;
     const Q64: u64 = Self::Q as u64;
-    const BARRETT_SHIFT: usize = 24;
-    const BARRETT_MULTIPLIER: u64 = (1 << Self::BARRETT_SHIFT) / Self::Q64;
+    // const BARRETT_SHIFT: usize = 24;
+    // const BARRETT_MULTIPLIER: u64 = (1 << Self::BARRETT_SHIFT) / Self::Q64;
 
     // A fast modular reduction for small numbers `x < 2*q`
     fn small_reduce(x: u16) -> u16 {
+        x % Self::Q
+        /*
         if x < Self::Q {
             x
         } else {
             x - Self::Q
         }
+        */
     }
 
     fn barrett_reduce(x: u32) -> u16 {
+        (x % Self::Q32) as u16
+        /*
         let product = u64::from(x) * Self::BARRETT_MULTIPLIER;
         let quotient = (product >> Self::BARRETT_SHIFT).truncate();
         let remainder = x - quotient * Self::Q32;
         Self::small_reduce(remainder.truncate())
+        */
     }
 
     // Algorithm 11. BaseCaseMultiply
@@ -60,7 +66,10 @@ impl Add<FieldElement> for FieldElement {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self {
-        Self(Self::small_reduce(self.0 + rhs.0))
+        let lhs = u64::from(self.0);
+        let rhs = u64::from(rhs.0);
+        let sum = lhs + rhs;
+        Self(Self::small_reduce(sum as Integer))
     }
 }
 
@@ -68,8 +77,11 @@ impl Sub<FieldElement> for FieldElement {
     type Output = Self;
 
     fn sub(self, rhs: Self) -> Self {
+        let lhs = u64::from(self.0);
+        let rhs = u64::from(rhs.0);
+        let diff = lhs + (u64::from(Self::Q)) - rhs;
         // Guard against underflow if `rhs` is too large
-        Self(Self::small_reduce(self.0 + Self::Q - rhs.0))
+        Self(Self::small_reduce(diff as Integer))
     }
 }
 
@@ -77,9 +89,10 @@ impl Mul<FieldElement> for FieldElement {
     type Output = FieldElement;
 
     fn mul(self, rhs: FieldElement) -> FieldElement {
-        let x = u32::from(self.0);
-        let y = u32::from(rhs.0);
-        Self(Self::barrett_reduce(x * y))
+        let x = u64::from(self.0);
+        let y = u64::from(rhs.0);
+        let prod = (x * y) % u64::from(Self::Q);
+        Self(prod as Integer)
     }
 }
 
