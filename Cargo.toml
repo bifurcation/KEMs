@@ -1,0 +1,8 @@
+[workspace]
+resolver = "2"
+members = [
+    "ml-kem",
+]
+
+[profile.bench]
+debug = true
