@@ -23,7 +23,7 @@ impl FieldElement {
 
     // A fast modular reduction for small numbers `x < 2*q`
     fn small_reduce(x: u16) -> u16 {
-        x & Self::Q
+        x % Self::Q
         /*
         if x < Self::Q {
             x
@@ -34,7 +34,7 @@ impl FieldElement {
     }
 
     fn barrett_reduce(x: u32) -> u16 {
-        (x as u16) % Self::Q
+        (x % Self::Q32) as u16
         /*
         let product = u64::from(x) * Self::BARRETT_MULTIPLIER;
         let quotient = (product >> Self::BARRETT_SHIFT).truncate();
