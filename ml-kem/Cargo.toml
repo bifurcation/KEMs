@@ -4,12 +4,13 @@ description = """
 Pure Rust implementation of the Module-Lattice-Based Key-Encapsulation Mechanism Standard
 (formerly known as Kyber) as described in the FIPS 203 Initial Public Draft
 """
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 rust-version = "1.74"
 license = "Apache-2.0 OR MIT"
 readme = "README.md"
-repository = "https://github.com/RustCrypto/KEMs/tree/master/ml-kem"
+homepage = "https://github.com/RustCrypto/KEMs/tree/master/ml-kem"
+repository = "https://github.com/RustCrypto/KEMs"
 categories = ["cryptography", "no-std"]
 keywords = ["crypto", "kyber", "lattice", "post-quantum"]
 
@@ -33,6 +34,7 @@ codspeed-criterion-compat = { version = "2.6.0", optional = true }
 [dev-dependencies]
 hex = "0.4.3"
 hex-literal = "0.4.1"
+num-rational = { version = "0.4.2", default-features = false, features = ["num-bigint"] }
 rand = "0.8.5"
 crypto-common = { version = "0.1.6", features = ["rand_core"] }
 
